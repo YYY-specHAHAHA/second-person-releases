@@ -1,0 +1,40 @@
+name: Publish second-person site
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: second-person-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check public site files
+        run: |
+          test -s site/second-person/index.html
+          test -s site/second-person/privacy/index.html
+          if test -e site/second-person/latest.json; then
+            python3 -m json.tool site/second-person/latest.json > /dev/null
+          fi
+          ! grep -R -E 'RELEASE_BLOCKER|__[A-Z_]+__' site/second-person
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
