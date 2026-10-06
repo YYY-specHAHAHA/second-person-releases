@@ -4,4 +4,6 @@
 
 公开页面由私有源码仓库中的 `release/scripts/build_public_site.py` 生成，并复制到 `site/`。GitHub Pages 使用本仓库的 `pages.yml` 部署。每个正式版本的 Release 附件须包含 `second-person-<版本>.apk`、`SHA256SUMS.txt`、公开版 `release-manifest.json` 和发布说明；Tag 为 `v<版本>`。在上传附件、验证可公开下载和完成发布门禁前，网站保持“正式版准备中”，且不存在 `latest.json`。
 
+`healthcheck.yml` 每小时检查公开页面和隐私页；发布后还会下载 APK 验证 SHA-256。GitHub Actions 定时任务可能延迟，且公开仓库长期无活动时可能自动停用。仓库所有者需开启 Actions 失败通知并查看实际运行记录，不能把工作流存在当作预警已送达。
+
 发布步骤与回滚措施见私有源码仓库 `release/release-runbook.md`。用户支持邮箱：dosomethinginteresting@outlook.com。
